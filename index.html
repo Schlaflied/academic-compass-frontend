@@ -20,14 +20,14 @@
             width: 8px;
         }
         .dark ::-webkit-scrollbar-track {
-            background: #1e1b4b; /* 暗紫色背景 */
+            background: #28235d; /* 深紫色背景 */
         }
         .dark ::-webkit-scrollbar-thumb {
-            background: #4f46e5; /* 亮紫色滑块 */
+            background: #6d28d9; /* 亮紫色滑块 */
             border-radius: 4px;
         }
         .dark ::-webkit-scrollbar-thumb:hover {
-            background: #6366f1;
+            background: #7c3aed;
         }
     </style>
     <script>
@@ -41,6 +41,13 @@
 
     <div id="app" class="relative min-h-screen w-full p-4 sm:p-6 lg:p-8">
         
+        <!--【新功能】左上角应用标题 -->
+        <div class="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8">
+            <h1 data-i18n-key="pageTitle" class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
+                学术罗盘 🧭
+            </h1>
+        </div>
+
         <!-- 右上角的控制按钮区域 -->
         <header class="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 flex items-center space-x-4">
             <!-- 明暗模式切换按钮 -->
@@ -52,7 +59,7 @@
             </button>
             <!-- 语言切换按钮 -->
             <div class="flex items-center bg-gray-200 dark:bg-slate-800 rounded-full p-1 text-sm font-medium">
-                <button data-lang="zh-CN" class="lang-btn px-3 py-1 rounded-full bg-white dark:bg-indigo-600 text-indigo-600 dark:text-white">简</button>
+                <button data-lang="zh-CN" class="lang-btn px-3 py-1 rounded-full bg-white dark:bg-purple-600 text-purple-600 dark:text-white">简</button>
                 <button data-lang="zh-TW" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">繁</button>
                 <button data-lang="en" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">EN</button>
             </div>
@@ -69,19 +76,19 @@
                 <div class="space-y-5">
                     <div>
                         <label for="major-input" data-i18n-key="majorLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的专业/学位</label>
-                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
+                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
                     </div>
                     <div>
                         <label for="interests-input" data-i18n-key="interestsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的研究方向或技能 (可选)</label>
-                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
+                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
                     </div>
                     <div>
                         <label for="resume-input" data-i18n-key="resumeLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">粘贴你的个人简介或简历 (可选)</label>
-                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
+                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
                     </div>
                 </div>
                 
-                <button id="analyze-button" class="mt-6 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:dark:bg-slate-700 disabled:cursor-not-allowed">
+                <button id="analyze-button" class="mt-6 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:dark:bg-slate-700 disabled:cursor-not-allowed">
                     <span data-i18n-key="analyzeButton">开始分析</span>
                     <div id="spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin inline-block ml-2"></div>
                 </button>
@@ -115,6 +122,7 @@
         // --- Internationalization (i18n) ---
         const locales = {
             'en': {
+                pageTitle: 'Academic Compass 🧭', //【新功能】页面标题
                 inputTitle: 'Enter Information',
                 inputSubtitle: 'The AI will automatically search and analyze your future possibilities',
                 majorLabel: 'Your Major/Degree',
@@ -129,11 +137,11 @@
                 connecting: 'Connecting to the AI brain, please wait...',
                 errorOccurred: 'An error occurred',
                 connectionError: 'Connection error, please check:\n1. Is your internet connection stable?\n2. Check the browser console (F12) for error messages.',
-                // 【i18n 修复】新增报告标题翻译
                 reportHeader: '--- Analysis Report ---',
                 referencesHeader: '--- Cited References ---'
             },
             'zh-CN': {
+                pageTitle: '学术罗盘 🧭', //【新功能】页面标题
                 inputTitle: '输入信息',
                 inputSubtitle: 'AI将自动搜索并分析你的未来可能性',
                 majorLabel: '你的专业/学位',
@@ -148,11 +156,11 @@
                 connecting: '正在连接云端AI大脑，请稍候...',
                 errorOccurred: '发生错误',
                 connectionError: '发生连接错误，请检查：\n1. 你的网络连接是否稳定？\n2. 浏览器控制台(F12)是否有报错信息？',
-                // 【i18n 修复】新增报告标题翻译
                 reportHeader: '--- 分析报告 ---',
                 referencesHeader: '--- 信息来源 ---'
             },
             'zh-TW': {
+                pageTitle: '學術羅盤 🧭', //【新功能】页面标题
                 inputTitle: '輸入資訊',
                 inputSubtitle: 'AI將自動搜尋並分析你的未來可能性',
                 majorLabel: '你的專業/學位',
@@ -167,7 +175,6 @@
                 connecting: '正在連接雲端AI大腦，請稍候...',
                 errorOccurred: '發生錯誤',
                 connectionError: '發生連接錯誤，請檢查：\n1. 你的網路連線是否穩定？\n2. 瀏覽器控制台(F12)是否有報錯訊息？',
-                // 【i18n 修复】新增报告标题翻译
                 reportHeader: '--- 分析報告 ---',
                 referencesHeader: '--- 資訊來源 ---'
             }
@@ -186,17 +193,18 @@
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                         el.placeholder = translations[key];
                     } else {
-                        el.innerHTML = translations[key];
+                        // 使用 textContent 替代 innerHTML，更安全，且能正确处理特殊字符
+                        el.textContent = translations[key];
                     }
                 }
             });
 
             langButtons.forEach(btn => {
                 if (btn.dataset.lang === lang) {
-                    btn.classList.add('bg-white', 'dark:bg-indigo-600', 'text-indigo-600', 'dark:text-white');
+                    btn.classList.add('bg-white', 'dark:bg-purple-600', 'text-purple-600', 'dark:text-white');
                     btn.classList.remove('text-gray-600', 'dark:text-gray-400');
                 } else {
-                    btn.classList.remove('bg-white', 'dark:bg-indigo-600', 'text-indigo-600', 'dark:text-white');
+                    btn.classList.remove('bg-white', 'dark:bg-purple-600', 'text-purple-600', 'dark:text-white');
                     btn.classList.add('text-gray-600', 'dark:text-gray-400');
                 }
             });
@@ -254,12 +262,11 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    // 【i18n 修复】使用语言文件中的翻译来构建报告标题
                     let report = `<h3>${locales[currentLang].reportHeader}</h3><br>${result.analysis.replace(/\n/g, '<br>')}`;
                     if (result.sources && result.sources.length > 0) {
                         report += `<br><br><h3>${locales[currentLang].referencesHeader}</h3><br>`;
                         result.sources.forEach(source => {
-                            report += `<p>- <a href="${source.link}" target="_blank" class="text-blue-500 dark:text-indigo-400 hover:underline">${source.title}</a></p>`;
+                            report += `<p>- <a href="${source.link}" target="_blank" class="text-blue-500 dark:text-purple-400 hover:underline">${source.title}</a></p>`;
                         });
                     }
                     resultContainer.innerHTML = report;
@@ -281,3 +288,5 @@
     </script>
 </body>
 </html>
+
+
