@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术罗盘 (Academic Compass)</title>
+    <!-- 引入Tailwind CSS，用于快速构建漂亮的界面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Google Fonts，使用更现代的字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 自定义字体和滚动条样式 */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* 为暗色模式下的滚动条增加样式，提升质感 */
+        .dark ::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e1b4b; /* 暗紫色背景 */
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* 亮紫色滑块 */
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+    </style>
+    <script>
+        // Tailwind CSS 暗色模式配置
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-slate-900 transition-colors duration-300">
+
+    <div id="app" class="relative min-h-screen w-full p-4 sm:p-6 lg:p-8">
+        
+        <!-- 右上角的控制按钮区域 -->
+        <header class="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 flex items-center space-x-4">
+            <!-- 明暗模式切换按钮 -->
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors">
+                <!-- 太阳图标 (默认显示) -->
+                <svg id="theme-icon-light" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <!-- 月亮图标 (暗色模式下显示) -->
+                <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+            <!-- 语言切换按钮 -->
+            <div class="flex items-center bg-gray-200 dark:bg-slate-800 rounded-full p-1 text-sm font-medium">
+                <button data-lang="zh-CN" class="lang-btn px-3 py-1 rounded-full bg-white dark:bg-indigo-600 text-indigo-600 dark:text-white">简</button>
+                <button data-lang="zh-TW" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">繁</button>
+                <button data-lang="en" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">EN</button>
+            </div>
+        </header>
+
+        <!-- 主内容区域，采用Grid布局实现1:1双栏 -->
+        <main class="max-w-7xl mx-auto mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- 左栏：信息输入 -->
+            <div class="bg-gray-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-2xl">
+                <h2 data-i18n-key="inputTitle" class="text-2xl font-bold text-gray-900 dark:text-white mb-1">输入信息</h2>
+                <p data-i18n-key="inputSubtitle" class="text-sm text-gray-500 dark:text-gray-400 mb-6">AI将自动搜索并分析你的未来可能性</p>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label for="major-input" data-i18n-key="majorLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的专业/学位</label>
+                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
+                    </div>
+                    <div>
+                        <label for="interests-input" data-i18n-key="interestsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的研究方向或技能 (可选)</label>
+                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
+                    </div>
+                    <div>
+                        <label for="resume-input" data-i18n-key="resumeLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">粘贴你的个人简介或简历 (可选)</label>
+                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-indigo-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
+                    </div>
+                </div>
+                
+                <button id="analyze-button" class="mt-6 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:dark:bg-slate-700 disabled:cursor-not-allowed">
+                    <span data-i18n-key="analyzeButton">开始分析</span>
+                    <div id="spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin inline-block ml-2"></div>
+                </button>
+            </div>
+
+            <!-- 右栏：分析报告 -->
+            <div class="bg-gray-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-2xl">
+                <h2 data-i18n-key="reportTitle" class="text-2xl font-bold text-gray-900 dark:text-white mb-2">分析报告</h2>
+                <div class="w-full h-px bg-gray-200 dark:bg-slate-700 mb-6"></div>
+                <div id="result-container" class="prose prose-blue dark:prose-invert max-w-none h-[500px] overflow-y-auto pr-2 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
+                    <p data-i18n-key="reportPlaceholder">(请在左侧输入信息后点击“开始分析”)</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- DOM Element Selection ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconLight = document.getElementById('theme-icon-light');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const analyzeButton = document.getElementById('analyze-button');
+        const spinner = document.getElementById('spinner');
+        const resultContainer = document.getElementById('result-container');
+        const majorInput = document.getElementById('major-input');
+        const interestsInput = document.getElementById('interests-input');
+        const resumeInput = document.getElementById('resume-input');
+        const langButtons = document.querySelectorAll('.lang-btn');
+
+        // --- Internationalization (i18n) ---
+        const locales = {
+            'en': {
+                inputTitle: 'Enter Information',
+                inputSubtitle: 'The AI will automatically search and analyze your future possibilities',
+                majorLabel: 'Your Major/Degree',
+                majorPlaceholder: 'e.g., PhD in Human-Computer Interaction',
+                interestsLabel: 'Your Research Interests or Skills (Optional)',
+                interestsPlaceholder: 'e.g., Natural Language Processing, User Research, Python',
+                resumeLabel: 'Paste your bio or resume (Optional)',
+                resumePlaceholder: 'Paste your resume text here for a more personalized analysis...',
+                analyzeButton: 'Analyze',
+                reportTitle: 'Analysis Report',
+                reportPlaceholder: '(Please enter information on the left and click "Analyze")',
+                connecting: 'Connecting to the AI brain, please wait...',
+                errorOccurred: 'An error occurred',
+                connectionError: 'Connection error, please check:\n1. Is your internet connection stable?\n2. Check the browser console (F12) for error messages.',
+                // 【i18n 修复】新增报告标题翻译
+                reportHeader: '--- Analysis Report ---',
+                referencesHeader: '--- Cited References ---'
+            },
+            'zh-CN': {
+                inputTitle: '输入信息',
+                inputSubtitle: 'AI将自动搜索并分析你的未来可能性',
+                majorLabel: '你的专业/学位',
+                majorPlaceholder: '例如：人机交互博士',
+                interestsLabel: '你的研究方向或技能 (可选)',
+                interestsPlaceholder: '例如：自然语言处理、用户研究、Python',
+                resumeLabel: '粘贴你的个人简介或简历 (可选)',
+                resumePlaceholder: '粘贴你的简历文本到这里，可以获得更个性化的分析...',
+                analyzeButton: '开始分析',
+                reportTitle: '分析报告',
+                reportPlaceholder: '(请在左侧输入信息后点击“开始分析”)',
+                connecting: '正在连接云端AI大脑，请稍候...',
+                errorOccurred: '发生错误',
+                connectionError: '发生连接错误，请检查：\n1. 你的网络连接是否稳定？\n2. 浏览器控制台(F12)是否有报错信息？',
+                // 【i18n 修复】新增报告标题翻译
+                reportHeader: '--- 分析报告 ---',
+                referencesHeader: '--- 信息来源 ---'
+            },
+            'zh-TW': {
+                inputTitle: '輸入資訊',
+                inputSubtitle: 'AI將自動搜尋並分析你的未來可能性',
+                majorLabel: '你的專業/學位',
+                majorPlaceholder: '例如：人機互動博士',
+                interestsLabel: '你的研究方向或技能 (可選)',
+                interestsPlaceholder: '例如：自然語言處理、使用者研究、Python',
+                resumeLabel: '貼上你的個人簡介或履歷 (可選)',
+                resumePlaceholder: '貼上你的履歷文本到這裡，可以獲得更個人化的分析...',
+                analyzeButton: '開始分析',
+                reportTitle: '分析報告',
+                reportPlaceholder: '(請在左側輸入資訊後點擊“開始分析”)',
+                connecting: '正在連接雲端AI大腦，請稍候...',
+                errorOccurred: '發生錯誤',
+                connectionError: '發生連接錯誤，請檢查：\n1. 你的網路連線是否穩定？\n2. 瀏覽器控制台(F12)是否有報錯訊息？',
+                // 【i18n 修复】新增报告标题翻译
+                reportHeader: '--- 分析報告 ---',
+                referencesHeader: '--- 資訊來源 ---'
+            }
+        };
+
+        let currentLang = 'zh-CN'; // 默认语言
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            const translations = locales[lang];
+            
+            document.querySelectorAll('[data-i18n-key]').forEach(el => {
+                const key = el.getAttribute('data-i18n-key');
+                if (translations[key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[key];
+                    } else {
+                        el.innerHTML = translations[key];
+                    }
+                }
+            });
+
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('bg-white', 'dark:bg-indigo-600', 'text-indigo-600', 'dark:text-white');
+                    btn.classList.remove('text-gray-600', 'dark:text-gray-400');
+                } else {
+                    btn.classList.remove('bg-white', 'dark:bg-indigo-600', 'text-indigo-600', 'dark:text-white');
+                    btn.classList.add('text-gray-600', 'dark:text-gray-400');
+                }
+            });
+        }
+
+        langButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                setLanguage(button.dataset.lang);
+            });
+        });
+
+        // --- Theme Toggle ---
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeIconDark.classList.remove('hidden');
+            themeIconLight.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            themeIconDark.classList.toggle('hidden', !isDark);
+            themeIconLight.classList.toggle('hidden', isDark);
+        });
+
+        // --- API Call Logic ---
+        const API_URL = 'https://academic-compass-backend-885033581194.us-central1.run.app/analyze';
+
+        analyzeButton.addEventListener('click', async function() {
+            if (!majorInput.value) {
+                alert(currentLang === 'en' ? 'Major/Degree is required!' : '专业/学位是必填项哦！');
+                return;
+            }
+
+            analyzeButton.disabled = true;
+            spinner.classList.remove('hidden');
+            resultContainer.innerHTML = `<p>${locales[currentLang].connecting}</p>`;
+
+            const data = {
+                major: majorInput.value,
+                interests: interestsInput.value,
+                resumeText: resumeInput.value,
+                language: currentLang
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // 【i18n 修复】使用语言文件中的翻译来构建报告标题
+                    let report = `<h3>${locales[currentLang].reportHeader}</h3><br>${result.analysis.replace(/\n/g, '<br>')}`;
+                    if (result.sources && result.sources.length > 0) {
+                        report += `<br><br><h3>${locales[currentLang].referencesHeader}</h3><br>`;
+                        result.sources.forEach(source => {
+                            report += `<p>- <a href="${source.link}" target="_blank" class="text-blue-500 dark:text-indigo-400 hover:underline">${source.title}</a></p>`;
+                        });
+                    }
+                    resultContainer.innerHTML = report;
+                } else {
+                    resultContainer.textContent = `${locales[currentLang].errorOccurred}: ${result.error}`;
+                }
+
+            } catch (error) {
+                resultContainer.textContent = `${locales[currentLang].connectionError}\n\n${error.message}`;
+            } finally {
+                analyzeButton.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        });
+        
+        // --- Initial Setup ---
+        setLanguage('zh-CN');
+
+    </script>
+</body>
+</html>
