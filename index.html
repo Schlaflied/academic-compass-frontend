@@ -41,7 +41,7 @@
 
     <div id="app" class="relative min-h-screen w-full p-4 sm:p-6 lg:p-8">
         
-        <!--【新功能】左上角应用标题 -->
+        <!-- 左上角应用标题 -->
         <div class="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8">
             <h1 data-i18n-key="pageTitle" class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
                 学术罗盘 🧭
@@ -76,15 +76,18 @@
                 <div class="space-y-5">
                     <div>
                         <label for="major-input" data-i18n-key="majorLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的专业/学位</label>
-                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
+                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
+                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
                     </div>
                     <div>
                         <label for="interests-input" data-i18n-key="interestsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的研究方向或技能 (可选)</label>
-                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
+                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
+                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
                     </div>
                     <div>
                         <label for="resume-input" data-i18n-key="resumeLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">粘贴你的个人简介或简历 (可选)</label>
-                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
+                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
+                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
                     </div>
                 </div>
                 
@@ -122,7 +125,7 @@
         // --- Internationalization (i18n) ---
         const locales = {
             'en': {
-                pageTitle: 'Academic Compass 🧭', //【新功能】页面标题
+                pageTitle: 'Academic Compass 🧭', 
                 inputTitle: 'Enter Information',
                 inputSubtitle: 'The AI will automatically search and analyze your future possibilities',
                 majorLabel: 'Your Major/Degree',
@@ -141,7 +144,7 @@
                 referencesHeader: '--- Cited References ---'
             },
             'zh-CN': {
-                pageTitle: '学术罗盘 🧭', //【新功能】页面标题
+                pageTitle: '学术罗盘 🧭',
                 inputTitle: '输入信息',
                 inputSubtitle: 'AI将自动搜索并分析你的未来可能性',
                 majorLabel: '你的专业/学位',
@@ -160,7 +163,7 @@
                 referencesHeader: '--- 信息来源 ---'
             },
             'zh-TW': {
-                pageTitle: '學術羅盤 🧭', //【新功能】页面标题
+                pageTitle: '學術羅盤 🧭',
                 inputTitle: '輸入資訊',
                 inputSubtitle: 'AI將自動搜尋並分析你的未來可能性',
                 majorLabel: '你的專業/學位',
@@ -193,7 +196,6 @@
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                         el.placeholder = translations[key];
                     } else {
-                        // 使用 textContent 替代 innerHTML，更安全，且能正确处理特殊字符
                         el.textContent = translations[key];
                     }
                 }
@@ -288,5 +290,7 @@
     </script>
 </body>
 </html>
+
+
 
 
