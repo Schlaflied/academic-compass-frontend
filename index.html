@@ -15,19 +15,19 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* 为暗色模式下的滚动条增加样式，提升质感 */
+        /* 【UI优化】为暗色模式下的滚动条更换为更沉稳的灰色系 */
         .dark ::-webkit-scrollbar {
             width: 8px;
         }
         .dark ::-webkit-scrollbar-track {
-            background: #28235d; /* 深紫色背景 */
+            background: #1f2937; /* 更中性的暗灰色轨道 */
         }
         .dark ::-webkit-scrollbar-thumb {
-            background: #6d28d9; /* 亮紫色滑块 */
+            background: #4b5563; /* 沉稳的灰色滑块 */
             border-radius: 4px;
         }
         .dark ::-webkit-scrollbar-thumb:hover {
-            background: #7c3aed;
+            background: #6b7280; /* 悬浮时变为更亮的灰色 */
         }
     </style>
     <script>
@@ -76,17 +76,14 @@
                 <div class="space-y-5">
                     <div>
                         <label for="major-input" data-i18n-key="majorLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的专业/学位</label>
-                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
                         <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
                     </div>
                     <div>
                         <label for="interests-input" data-i18n-key="interestsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的研究方向或技能 (可选)</label>
-                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
                         <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
                     </div>
                     <div>
                         <label for="resume-input" data-i18n-key="resumeLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">粘贴你的个人简介或简历 (可选)</label>
-                        <!-- 【UI优化】增加了 dark:text-white 确保暗色模式下输入文字为白色 -->
                         <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
                     </div>
                 </div>
@@ -290,6 +287,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
