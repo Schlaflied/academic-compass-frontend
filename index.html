@@ -3,291 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学术罗盘 (Academic Compass)</title>
-    <!-- 引入Tailwind CSS，用于快速构建漂亮的界面 -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入Google Fonts，使用更现代的字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>学术罗盘 (Academic Compass) v3.1</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.8/dist/purify.min.js"></script>
     <style>
-        /* 自定义字体和滚动条样式 */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* 【UI优化】为暗色模式下的滚动条更换为更沉稳的灰色系 */
-        .dark ::-webkit-scrollbar {
-            width: 8px;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #1f2937; /* 更中性的暗灰色轨道 */
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #4b5563; /* 沉稳的灰色滑块 */
-            border-radius: 4px;
-        }
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; /* 悬浮时变为更亮的灰色 */
+        /* 样式与 Project Lens 完全同步 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@400;500;700&display=swap');
+        
+        /* 【修改1】将深色模式的主色调从蓝色改为紫色 */
+        :root { --background-color: #121212; --surface-color: #1e1e1e; --primary-color: #9b59b6; --text-color: #e0e0e0; --text-secondary-color: #a0a0a0; --border-color: #333; --card-padding: 30px; }
+        html.light-mode { --background-color: #f4f5f7; --surface-color: #ffffff; --primary-color: #007bff; --text-color: #333333; --text-secondary-color: #777777; --border-color: #e0e0e0; }
+        
+        body { font-family: 'Inter', 'Noto Sans SC', 'Noto Sans TC', sans-serif; background-color: var(--background-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
+        .header { width: 100%; max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 700; }
+        .controls { display: flex; align-items: center; gap: 15px; }
+        .theme-switcher { background: none; border: 1px solid var(--border-color); color: var(--text-secondary-color); cursor: pointer; font-size: 24px; padding: 5px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .theme-switcher:hover { color: var(--text-color); background-color: var(--surface-color); }
+        
+        /* 【修改3】修正布局，默认为横向排列 */
+        .main-container { display: flex; flex-direction: row; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; height: calc(100vh - 100px); }
+        
+        .panel { background-color: var(--surface-color); border-radius: 16px; border: 1px solid var(--border-color); padding: var(--card-padding); box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s, border-color 0.3s; display: flex; flex-direction: column; }
+        .input-panel, .output-panel { flex: 1; overflow-y: auto; }
+        h1 { font-size: 28px; margin-top: 0; margin-bottom: 10px; }
+        .subtitle { color: var(--text-secondary-color); margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; }
+        textarea, input[type="text"] { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; box-sizing: border-box; background-color: var(--background-color); color: var(--text-color); }
+        textarea { resize: vertical; }
+        .analyze-button { width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; justify-content: center; align-items: center; margin-top: auto; }
+        .analyze-button:disabled { background: #555; cursor: not-allowed; }
+        #result-container { line-height: 1.7; }
+        #result-container h2 { font-size: 20px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; margin-top: 25px; }
+        .sources-container { margin-top: 20px; font-size: 14px; }
+        .sources-container a { color: var(--text-secondary-color); text-decoration: none; }
+        .sources-container a:hover { text-decoration: underline; }
+        .spinner { border: 3px solid rgba(255,255,255,0.2); width: 18px; height: 18px; border-radius: 50%; border-left-color: #fff; animation: spin 1s ease infinite; display: inline-block; vertical-align: middle; margin-left: 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* 【修改2】增加引用小标的样式 */
+        .citation-link { color: var(--primary-color); text-decoration: none; font-weight: bold; vertical-align: super; font-size: 0.8em; margin: 0 2px; }
+        .citation-link:hover { text-decoration: underline; }
+
+        .source-item { display: flex; align-items: center; padding: 4px 0; }
+        .lang-toggle { display: flex; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; background-color: var(--surface-color); }
+        .lang-toggle button { background: none; border: none; color: var(--text-secondary-color); padding: 8px 16px; cursor: pointer; transition: all 0.2s ease-in-out; font-size: 15px; font-weight: 500; }
+        .lang-toggle button:not(:last-child) { border-right: 1px solid var(--border-color); }
+        .lang-toggle button.active { background-color: var(--primary-color); color: white; }
+        .lang-toggle button:hover:not(.active) { color: var(--text-color); }
+        .source-icon { width: 16px; height: 16px; margin-right: 8px; flex-shrink: 0; color: var(--text-secondary-color); }
+        .coffee-button { display: flex; align-items: center; justify-content: center; gap: 8px; background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary-color); padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 15px; font-weight: 500; transition: all 0.2s ease-in-out; }
+        .coffee-button:hover { color: var(--text-color); background-color: var(--surface-color); border-color: var(--text-color); }
+        
+        /* 【修改3】当屏幕变窄时，切换为纵向布局 */
+        @media (max-width: 1024px) { 
+            .main-container { flex-direction: column; height: auto; } 
+            .panel { height: 60vh; } 
         }
     </style>
-    <script>
-        // Tailwind CSS 暗色模式配置
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
 </head>
-<body class="bg-white dark:bg-slate-900 transition-colors duration-300">
+<body>
 
-    <div id="app" class="relative min-h-screen w-full p-4 sm:p-6 lg:p-8">
-        
-        <!-- 左上角应用标题 -->
-        <div class="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8">
-            <h1 data-i18n-key="pageTitle" class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
-                学术罗盘 🧭
-            </h1>
+    <header class="header">
+        <div class="logo" id="logo">🧭 学术罗盘</div>
+        <div class="controls">
+            <a href="https://buymeacoffee.com/200203sytty" target="_blank" rel="noopener noreferrer" class="coffee-button">
+                <span>☕️</span>
+                <span data-key="support_text">请开发者喝杯咖啡</span>
+            </a>
+            <button class="theme-switcher" id="theme-switcher">☀️</button>
+            <div class="lang-toggle" id="lang-toggle">
+                <button data-lang="zh-CN">简</button>
+                <button data-lang="zh-TW">繁</button>
+                <button data-lang="en">EN</button>
+            </div>
         </div>
+    </header>
 
-        <!-- 右上角的控制按钮区域 -->
-        <header class="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 flex items-center space-x-4">
-            <!-- 明暗模式切换按钮 -->
-            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors">
-                <!-- 太阳图标 (默认显示) -->
-                <svg id="theme-icon-light" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <!-- 月亮图标 (暗色模式下显示) -->
-                <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    <main class="main-container">
+        <section class="panel input-panel">
+            <div>
+                <h1 data-key="title">输入信息</h1>
+                <p class="subtitle" data-key="subtitle">AI将自动搜索并分析你的未来可能性</p>
+                <div class="form-group">
+                    <label for="major-input" data-key="major_label">你的专业/学位</label>
+                    <input type="text" id="major-input" data-key-placeholder="major_placeholder">
+                </div>
+                <div class="form-group">
+                    <label for="interests-input" data-key="interests_label">研究方向或技能 (可选)</label>
+                    <input type="text" id="interests-input" data-key-placeholder="interests_placeholder">
+                </div>
+                <div class="form-group">
+                    <label for="resume-input" data-key="resume_label">我的简历 / 个人简介 (可选)</label>
+                    <textarea id="resume-input" rows="6" data-key-placeholder="resume_placeholder"></textarea>
+                </div>
+            </div>
+            <button class="analyze-button" id="analyze-button">
+                <span data-key="button_text">开始分析</span>
             </button>
-            <!-- 语言切换按钮 -->
-            <div class="flex items-center bg-gray-200 dark:bg-slate-800 rounded-full p-1 text-sm font-medium">
-                <button data-lang="zh-CN" class="lang-btn px-3 py-1 rounded-full bg-white dark:bg-purple-600 text-purple-600 dark:text-white">简</button>
-                <button data-lang="zh-TW" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">繁</button>
-                <button data-lang="en" class="lang-btn px-3 py-1 rounded-full text-gray-600 dark:text-gray-400">EN</button>
-            </div>
-        </header>
+        </section>
 
-        <!-- 主内容区域，采用Grid布局实现1:1双栏 -->
-        <main class="max-w-7xl mx-auto mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- 左栏：信息输入 -->
-            <div class="bg-gray-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-2xl">
-                <h2 data-i18n-key="inputTitle" class="text-2xl font-bold text-gray-900 dark:text-white mb-1">输入信息</h2>
-                <p data-i18n-key="inputSubtitle" class="text-sm text-gray-500 dark:text-gray-400 mb-6">AI将自动搜索并分析你的未来可能性</p>
-                
-                <div class="space-y-5">
-                    <div>
-                        <label for="major-input" data-i18n-key="majorLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的专业/学位</label>
-                        <input type="text" id="major-input" data-i18n-key="majorPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：PhD in Human-Computer Interaction">
-                    </div>
-                    <div>
-                        <label for="interests-input" data-i18n-key="interestsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">你的研究方向或技能 (可选)</label>
-                        <input type="text" id="interests-input" data-i18n-key="interestsPlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="例如：Natural Language Processing, User Research, Python">
-                    </div>
-                    <div>
-                        <label for="resume-input" data-i18n-key="resumeLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">粘贴你的个人简介或简历 (可选)</label>
-                        <textarea id="resume-input" rows="6" data-i18n-key="resumePlaceholder" class="w-full px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition" placeholder="粘贴你的简历文本到这里，可以获得更个性化的分析..."></textarea>
-                    </div>
-                </div>
-                
-                <button id="analyze-button" class="mt-6 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:bg-gray-400 disabled:dark:bg-slate-700 disabled:cursor-not-allowed">
-                    <span data-i18n-key="analyzeButton">开始分析</span>
-                    <div id="spinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin inline-block ml-2"></div>
-                </button>
+        <section class="panel output-panel">
+            <div id="result-container">
+                <h2 data-key="result_placeholder_title">分析报告</h2>
+                <p data-key="result_placeholder_text" style="color: var(--text-secondary-color);">（请输入专业后点击分析）</p>
             </div>
-
-            <!-- 右栏：分析报告 -->
-            <div class="bg-gray-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-2xl">
-                <h2 data-i18n-key="reportTitle" class="text-2xl font-bold text-gray-900 dark:text-white mb-2">分析报告</h2>
-                <div class="w-full h-px bg-gray-200 dark:bg-slate-700 mb-6"></div>
-                <div id="result-container" class="prose prose-blue dark:prose-invert max-w-none h-[500px] overflow-y-auto pr-2 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
-                    <p data-i18n-key="reportPlaceholder">(请在左侧输入信息后点击“开始分析”)</p>
-                </div>
-            </div>
-
-        </main>
-    </div>
+            <div class="sources-container" id="sources-container"></div>
+        </section>
+    </main>
 
     <script>
-        // --- DOM Element Selection ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIconLight = document.getElementById('theme-icon-light');
-        const themeIconDark = document.getElementById('theme-icon-dark');
-        const analyzeButton = document.getElementById('analyze-button');
-        const spinner = document.getElementById('spinner');
-        const resultContainer = document.getElementById('result-container');
+        // --- 1. 元素获取 ---
         const majorInput = document.getElementById('major-input');
         const interestsInput = document.getElementById('interests-input');
         const resumeInput = document.getElementById('resume-input');
-        const langButtons = document.querySelectorAll('.lang-btn');
+        const analyzeButton = document.getElementById('analyze-button');
+        const resultContainer = document.getElementById('result-container');
+        const sourcesContainer = document.getElementById('sources-container');
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const logo = document.getElementById('logo');
+        const langToggle = document.getElementById('lang-toggle');
 
-        // --- Internationalization (i18n) ---
-        const locales = {
-            'en': {
-                pageTitle: 'Academic Compass 🧭', 
-                inputTitle: 'Enter Information',
-                inputSubtitle: 'The AI will automatically search and analyze your future possibilities',
-                majorLabel: 'Your Major/Degree',
-                majorPlaceholder: 'e.g., PhD in Human-Computer Interaction',
-                interestsLabel: 'Your Research Interests or Skills (Optional)',
-                interestsPlaceholder: 'e.g., Natural Language Processing, User Research, Python',
-                resumeLabel: 'Paste your bio or resume (Optional)',
-                resumePlaceholder: 'Paste your resume text here for a more personalized analysis...',
-                analyzeButton: 'Analyze',
-                reportTitle: 'Analysis Report',
-                reportPlaceholder: '(Please enter information on the left and click "Analyze")',
-                connecting: 'Connecting to the AI brain, please wait...',
-                errorOccurred: 'An error occurred',
-                connectionError: 'Connection error, please check:\n1. Is your internet connection stable?\n2. Check the browser console (F12) for error messages.',
-                reportHeader: '--- Analysis Report ---',
-                referencesHeader: '--- Cited References ---'
+        // --- 2. API 配置 ---
+        const API_URL = 'https://academic-compass-backend-885033581194.us-central1.run.app/analyze'; 
+
+        // --- 3. 国际化 (i18n) 配置 ---
+        const translations = {
+            'zh-CN': { 
+                logo_text: '🧭 学术罗盘', title: '输入信息', subtitle: 'AI将自动搜索并分析你的未来可能性', 
+                major_label: '你的专业/学位', major_placeholder: '例如：人机交互博士', 
+                interests_label: '研究方向或技能 (可选)', interests_placeholder: '例如：自然语言处理, 用户研究', 
+                resume_label: '我的简历 / 个人简介 (可选)', resume_placeholder: '粘贴你的个人简介或简历，获得更精准的匹配分析...', 
+                button_text: '开始分析', button_loading_text: '分析中...', 
+                result_placeholder_title: '分析报告', result_placeholder_text: '（请输入专业后点击分析）', 
+                sources_title: '引用来源:',
+                rate_limit_exceeded: "同学，您今日的免费探索次数已用尽！🧭\n\nAcademic Compass 每天为所有用户提供5次免费生涯规划分析。\n如果需要更多支持，欢迎明天再来探索，或通过‘请我喝杯咖啡☕️’来支持项目发展！",
+                connection_error: "发生连接错误，请检查网络或联系开发者。",
+                support_text: "请开发者喝杯咖啡",
+                loading_statuses: [
+                    "正在连接AI大脑...",
+                    "正在搜索相关职业路径...",
+                    "正在分析加拿大就业市场数据...",
+                    "正在召唤 Gemini 进行深度分析...",
+                    "即将完成，正在生成专属生涯报告..."
+                ]
             },
-            'zh-CN': {
-                pageTitle: '学术罗盘 🧭',
-                inputTitle: '输入信息',
-                inputSubtitle: 'AI将自动搜索并分析你的未来可能性',
-                majorLabel: '你的专业/学位',
-                majorPlaceholder: '例如：人机交互博士',
-                interestsLabel: '你的研究方向或技能 (可选)',
-                interestsPlaceholder: '例如：自然语言处理、用户研究、Python',
-                resumeLabel: '粘贴你的个人简介或简历 (可选)',
-                resumePlaceholder: '粘贴你的简历文本到这里，可以获得更个性化的分析...',
-                analyzeButton: '开始分析',
-                reportTitle: '分析报告',
-                reportPlaceholder: '(请在左侧输入信息后点击“开始分析”)',
-                connecting: '正在连接云端AI大脑，请稍候...',
-                errorOccurred: '发生错误',
-                connectionError: '发生连接错误，请检查：\n1. 你的网络连接是否稳定？\n2. 浏览器控制台(F12)是否有报错信息？',
-                reportHeader: '--- 分析报告 ---',
-                referencesHeader: '--- 信息来源 ---'
+            'zh-TW': { 
+                logo_text: '🧭 學術羅盤', title: '輸入資訊', subtitle: 'AI將自動搜尋並分析你的未來可能性', 
+                major_label: '你的專業/學位', major_placeholder: '例如：人機互動博士', 
+                interests_label: '研究方向或技能 (可選)', interests_placeholder: '例如：自然語言處理, 使用者研究', 
+                resume_label: '我的履歷 / 個人簡介 (可選)', resume_placeholder: '貼上你的個人簡介或履歷，獲得更精準的匹配分析...', 
+                button_text: '開始分析', button_loading_text: '分析中...', 
+                result_placeholder_title: '分析報告', result_placeholder_text: '（請輸入專業後點擊分析）', 
+                sources_title: '引用來源:',
+                rate_limit_exceeded: "同學，您今日的免費探索次數已用盡！🧭\n\nAcademic Compass 每天為所有用戶提供5次免費生涯規劃分析。\n如果需要更多支持，歡迎明天再來探索，或通過「請我喝杯咖啡☕️」來支持項目發展！",
+                connection_error: "發生連接錯誤，請檢查網路或聯絡開發者。",
+                support_text: "請開發者喝杯咖啡",
+                 loading_statuses: [
+                    "正在連接AI大腦...",
+                    "正在搜尋相關職業路徑...",
+                    "正在分析加拿大就業市場數據...",
+                    "正在召喚 Gemini 進行深度分析...",
+                    "即將完成，正在生成專屬生涯報告..."
+                ]
             },
-            'zh-TW': {
-                pageTitle: '學術羅盤 🧭',
-                inputTitle: '輸入資訊',
-                inputSubtitle: 'AI將自動搜尋並分析你的未來可能性',
-                majorLabel: '你的專業/學位',
-                majorPlaceholder: '例如：人機互動博士',
-                interestsLabel: '你的研究方向或技能 (可選)',
-                interestsPlaceholder: '例如：自然語言處理、使用者研究、Python',
-                resumeLabel: '貼上你的個人簡介或履歷 (可選)',
-                resumePlaceholder: '貼上你的履歷文本到這裡，可以獲得更個人化的分析...',
-                analyzeButton: '開始分析',
-                reportTitle: '分析報告',
-                reportPlaceholder: '(請在左側輸入資訊後點擊“開始分析”)',
-                connecting: '正在連接雲端AI大腦，請稍候...',
-                errorOccurred: '發生錯誤',
-                connectionError: '發生連接錯誤，請檢查：\n1. 你的網路連線是否穩定？\n2. 瀏覽器控制台(F12)是否有報錯訊息？',
-                reportHeader: '--- 分析報告 ---',
-                referencesHeader: '--- 資訊來源 ---'
+            'en': { 
+                logo_text: '🧭 Academic Compass', title: 'Input Information', subtitle: 'AI will automatically search and analyze your future possibilities', 
+                major_label: 'Your Major/Degree', major_placeholder: 'e.g., PhD in Human-Computer Interaction', 
+                interests_label: 'Research Interests or Skills (Optional)', interests_placeholder: 'e.g., Natural Language Processing, User Research', 
+                resume_label: 'My Resume / Bio (Optional)', resume_placeholder: 'Paste your bio or resume for a more personalized analysis...', 
+                button_text: 'Analyze', button_loading_text: 'Analyzing...', 
+                result_placeholder_title: 'Analysis Report', result_placeholder_text: '(Enter your major and click Analyze)', 
+                sources_title: 'References:',
+                rate_limit_exceeded: "You have used up your free explorations for today! 🧭\n\nAcademic Compass provides 5 free career analyses per day for all users.\nFeel free to come back tomorrow for more insights, or 'Buy me a coffee ☕️' to support the project!",
+                connection_error: "Connection error. Please check your network or contact the developer.",
+                support_text: "Buy the developer a coffee",
+                loading_statuses: [
+                    "Connecting to the AI brain...",
+                    "Searching for relevant career paths...",
+                    "Analyzing Canadian job market data...",
+                    "Summoning Gemini for deep analysis...",
+                    "Finalizing, generating your personalized career report..."
+                ]
             }
         };
+        
+        const ICONS = {
+            linkedin: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h._16zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg>`,
+            glassdoor: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M1.185 1.185A1.5 1.5 0 0 1 2.57.293l10.854 10.854a.5.5 0 0 1 0 .708L11.146 14a.5.5 0 0 1-.708 0L.293 2.854A1.5 1.5 0 0 1 1.185 1.185zM14.815 1.185a1.5 1.5 0 0 0-2.122 0L.854 13.146a.5.5 0 0 0 0 .708L2.854 15.707a.5.5 0 0 0 .708 0L15.707 3.565a1.5 1.5 0 0 0 0-2.122l-.892-.892z"/></svg>`,
+            indeed: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M13.555 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM10.31 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM8.36 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM5.945 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM15.363 4.091A1.91 1.91 0 0 0 13.455 2.182h-10.91A1.91 1.91 0 0 0 .636 4.091v7.818A1.91 1.91 0 0 0 2.545 13.818h10.91a1.91 1.91 0 0 0 1.909-1.909V4.091zM2.909 5.227a1.136 1.136 0 1 1 0 2.273 1.136 1.136 0 0 1 0-2.273z"/></svg>`,
+            default: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>`
+        };
 
-        let currentLang = 'zh-CN'; // 默认语言
+        // --- 4. 核心逻辑 ---
+        let currentLang = 'zh-CN';
+        let loadingInterval = null;
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-            const translations = locales[lang];
-            
-            document.querySelectorAll('[data-i18n-key]').forEach(el => {
-                const key = el.getAttribute('data-i18n-key');
-                if (translations[key]) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                        el.placeholder = translations[key];
-                    } else {
-                        el.textContent = translations[key];
-                    }
-                }
-            });
-
-            langButtons.forEach(btn => {
-                if (btn.dataset.lang === lang) {
-                    btn.classList.add('bg-white', 'dark:bg-purple-600', 'text-purple-600', 'dark:text-white');
-                    btn.classList.remove('text-gray-600', 'dark:text-gray-400');
-                } else {
-                    btn.classList.remove('bg-white', 'dark:bg-purple-600', 'text-purple-600', 'dark:text-white');
-                    btn.classList.add('text-gray-600', 'dark:text-gray-400');
-                }
-            });
+        function setLanguage(langCode) {
+            currentLang = langCode;
+            document.documentElement.lang = langCode;
+            const t = translations[langCode];
+            document.querySelectorAll('[data-key]').forEach(elem => { const key = elem.getAttribute('data-key'); if (t[key]) elem.textContent = t[key]; });
+            document.querySelectorAll('[data-key-placeholder]').forEach(elem => { const key = elem.getAttribute('data-key-placeholder'); if (t[key]) elem.placeholder = t[key]; });
+            logo.textContent = t.logo_text;
+            langToggle.querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.lang === langCode));
         }
 
-        langButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                setLanguage(button.dataset.lang);
-            });
-        });
-
-        // --- Theme Toggle ---
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            themeIconDark.classList.remove('hidden');
-            themeIconLight.classList.add('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
+        function setTheme(theme) {
+            document.documentElement.classList.toggle('light-mode', theme === 'light');
+            themeSwitcher.textContent = theme === 'light' ? '🌙' : '☀️';
+            localStorage.setItem('theme', theme);
         }
-
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.theme = isDark ? 'dark' : 'light';
-            themeIconDark.classList.toggle('hidden', !isDark);
-            themeIconLight.classList.toggle('hidden', isDark);
-        });
-
-        // --- API Call Logic ---
-        const API_URL = 'https://academic-compass-backend-885033581194.us-central1.run.app/analyze';
 
         analyzeButton.addEventListener('click', async function() {
-            if (!majorInput.value) {
-                alert(currentLang === 'en' ? 'Major/Degree is required!' : '专业/学位是必填项哦！');
+            if (!majorInput.value.trim()) {
+                alert(currentLang === 'en' ? 'Major/Degree is required!' : '“专业/学位”是必填项哦！');
                 return;
             }
-
+        
+            const t = translations[currentLang];
+            const buttonTextSpan = analyzeButton.querySelector('span');
+            
+            buttonTextSpan.textContent = t.button_loading_text;
+            analyzeButton.insertAdjacentHTML('beforeend', '<div class="spinner"></div>');
             analyzeButton.disabled = true;
-            spinner.classList.remove('hidden');
-            resultContainer.innerHTML = `<p>${locales[currentLang].connecting}</p>`;
+            sourcesContainer.innerHTML = '';
 
-            const data = {
-                major: majorInput.value,
-                interests: interestsInput.value,
-                resumeText: resumeInput.value,
-                language: currentLang
-            };
+            let statusIndex = 0;
+            const loadingStatuses = t.loading_statuses;
+            resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p>${loadingStatuses[statusIndex]}</p>`;
+            statusIndex++;
+            
+            loadingInterval = setInterval(() => {
+                if (statusIndex < loadingStatuses.length) {
+                    resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p>${loadingStatuses[statusIndex]}</p>`;
+                    statusIndex++;
+                } else {
+                    clearInterval(loadingInterval);
+                }
+            }, 3000);
+
+            const data = { major: majorInput.value, interests: interestsInput.value, resumeText: resumeInput.value, language: currentLang };
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 const result = await response.json();
-                
-                if (response.ok) {
-                    let report = `<h3>${locales[currentLang].reportHeader}</h3><br>${result.analysis.replace(/\n/g, '<br>')}`;
-                    if (result.sources && result.sources.length > 0) {
-                        report += `<br><br><h3>${locales[currentLang].referencesHeader}</h3><br>`;
-                        result.sources.forEach(source => {
-                            report += `<p>- <a href="${source.link}" target="_blank" class="text-blue-500 dark:text-purple-400 hover:underline">${source.title}</a></p>`;
-                        });
-                    }
-                    resultContainer.innerHTML = report;
-                } else {
-                    resultContainer.textContent = `${locales[currentLang].errorOccurred}: ${result.error}`;
-                }
 
+                if (loadingInterval) clearInterval(loadingInterval);
+
+                if (response.ok) {
+                    let analysisHtml = marked.parse(result.analysis || '');
+                    analysisHtml = analysisHtml.replace(/\[(\d+)\]/g, (match, number) => `<a href="#source-${number}" class="citation-link">${match}</a>`);
+                    resultContainer.innerHTML = DOMPurify.sanitize(analysisHtml);
+                    
+                    if (result.sources && result.sources.length > 0) {
+                        let sourcesHTML = `<h2>${t.sources_title}</h2>`;
+                        result.sources.forEach(source => {
+                            const icon = ICONS[source.source_type] || ICONS.default;
+                            sourcesHTML += `<div class="source-item" id="source-${source.id}">
+                                              ${icon}
+                                              <span>[${source.id}] <a href="${source.link}" target="_blank" rel="noopener noreferrer">${source.title}</a></span>
+                                          </div>`;
+                        });
+                        sourcesContainer.innerHTML = DOMPurify.sanitize(sourcesHTML, {ADD_ATTR: ['id'], ADD_TAGS: ['svg', 'path']});
+                    }
+                } else {
+                    if (result.error === 'rate_limit_exceeded') {
+                        resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p style="white-space: pre-wrap;">${result.message || t.rate_limit_exceeded}</p>`;
+                    } else {
+                        resultContainer.innerHTML = `<h2>Error</h2><p>${result.error || 'Unknown error'}</p>`;
+                    }
+                }
             } catch (error) {
-                resultContainer.textContent = `${locales[currentLang].connectionError}\n\n${error.message}`;
+                if (loadingInterval) clearInterval(loadingInterval);
+                resultContainer.innerHTML = `<h2>Error</h2><p>${t.connection_error}</p>`;
+                console.error("Fetch Error:", error);
             } finally {
+                if (loadingInterval) clearInterval(loadingInterval);
+                buttonTextSpan.textContent = t.button_text;
+                if(analyzeButton.querySelector('.spinner')) analyzeButton.querySelector('.spinner').remove();
                 analyzeButton.disabled = false;
-                spinner.classList.add('hidden');
             }
         });
-        
-        // --- Initial Setup ---
-        setLanguage('zh-CN');
 
+        // --- 5. 初始化 ---
+        themeSwitcher.addEventListener('click', () => setTheme(document.documentElement.classList.contains('light-mode') ? 'dark' : 'light'));
+        langToggle.addEventListener('click', (event) => { if (event.target.tagName === 'BUTTON') { const langCode = event.target.dataset.lang; if (langCode && langCode !== currentLang) { setLanguage(langCode); } } });
+        setTheme(localStorage.getItem('theme') || 'dark');
+        setLanguage('zh-CN');
     </script>
 </body>
 </html>
-
 
 
 
