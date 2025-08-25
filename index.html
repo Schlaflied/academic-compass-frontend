@@ -34,6 +34,8 @@
         .analyze-button:disabled { background: #555; cursor: not-allowed; }
         #result-container { line-height: 1.7; }
         #result-container h2 { font-size: 20px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; margin-top: 25px; }
+        /* Welcome message specific style */
+        #result-container .welcome-message h2 { border-bottom: none; margin-top: 0; }
         .sources-container { margin-top: 20px; font-size: 14px; }
         .sources-container a { color: var(--text-secondary-color); text-decoration: none; }
         .sources-container a:hover { text-decoration: underline; }
@@ -101,10 +103,15 @@
         </section>
 
         <section class="panel output-panel">
+            <!-- *** MODIFICATION START: Welcome Message *** -->
             <div id="result-container">
-                <h2 data-key="result_placeholder_title">分析报告</h2>
-                <p data-key="result_placeholder_text" style="color: var(--text-secondary-color);">（请输入专业后点击分析）</p>
+                <div class="welcome-message">
+                    <h2 data-key="welcome_title"></h2>
+                    <p data-key="welcome_p1" style="color: var(--text-secondary-color); margin-top: 15px;"></p>
+                    <p data-key="welcome_p2" style="color: var(--text-secondary-color); margin-top: 15px;"></p>
+                </div>
             </div>
+            <!-- *** MODIFICATION END *** -->
             <div class="sources-container" id="sources-container"></div>
         </section>
     </main>
@@ -132,11 +139,13 @@
                 interests_label: '研究方向或技能 (可选)', interests_placeholder: '例如：自然语言处理, 用户研究', 
                 resume_label: '我的简历 / 个人简介 (可选)', resume_placeholder: '粘贴你的个人简介或简历，获得更精准的匹配分析...', 
                 button_text: '开始分析', button_loading_text: '分析中...', 
-                result_placeholder_title: '分析报告', result_placeholder_text: '（请输入专业后点击分析）', 
                 sources_title: '引用来源:',
                 rate_limit_exceeded: "同学，您今日的免费探索次数已用尽！🧭\n\nAcademic Compass 每天为所有用户提供5次免费生涯规划分析。\n如果需要更多支持，欢迎明天再来探索，或通过‘请我喝杯咖啡☕️’来支持项目发展！",
                 connection_error: "发生连接错误，请检查网络或联系开发者。",
                 support_text: "请开发者喝杯咖啡",
+                welcome_title: "欢迎来到学术罗盘！",
+                welcome_p1: "我能帮你探索专业背后的职业蓝图，规划你的学术与职业生涯。",
+                welcome_p2: "请在左侧输入你的专业/学位，开启导航吧！为了获得最精准的结果，请输入完整的学位名称 (e.g., Master of Computer Science)。",
                 loading_statuses: [
                     "正在连接AI大脑...",
                     "正在搜索相关职业路径...",
@@ -151,11 +160,13 @@
                 interests_label: '研究方向或技能 (可選)', interests_placeholder: '例如：自然語言處理, 使用者研究', 
                 resume_label: '我的履歷 / 個人簡介 (可選)', resume_placeholder: '貼上你的個人簡介或履歷，獲得更精準的匹配分析...', 
                 button_text: '開始分析', button_loading_text: '分析中...', 
-                result_placeholder_title: '分析報告', result_placeholder_text: '（請輸入專業後點擊分析）', 
                 sources_title: '引用來源:',
                 rate_limit_exceeded: "同學，您今日的免費探索次數已用盡！🧭\n\nAcademic Compass 每天為所有用戶提供5次免費生涯規劃分析。\n如果需要更多支持，歡迎明天再來探索，或通過「請我喝杯咖啡☕️」來支持項目發展！",
                 connection_error: "發生連接錯誤，請檢查網路或聯絡開發者。",
                 support_text: "請開發者喝杯咖啡",
+                welcome_title: "歡迎來到學術羅盤！",
+                welcome_p1: "我能幫你探索專業背後的職業藍圖，規劃你的學術與職業生涯。",
+                welcome_p2: "請在左側輸入你的專業/學位，開啟導航吧！為了獲得最精準的結果，請輸入完整的學位名稱 (e.g., Master of Computer Science)。",
                  loading_statuses: [
                     "正在連接AI大腦...",
                     "正在搜尋相關職業路徑...",
@@ -170,11 +181,13 @@
                 interests_label: 'Research Interests or Skills (Optional)', interests_placeholder: 'e.g., Natural Language Processing, User Research', 
                 resume_label: 'My Resume / Bio (Optional)', resume_placeholder: 'Paste your bio or resume for a more personalized analysis...', 
                 button_text: 'Analyze', button_loading_text: 'Analyzing...', 
-                result_placeholder_title: 'Analysis Report', result_placeholder_text: '(Enter your major and click Analyze)', 
                 sources_title: 'References:',
                 rate_limit_exceeded: "You have used up your free explorations for today! 🧭\n\nAcademic Compass provides 5 free career analyses per day for all users.\nFeel free to come back tomorrow for more insights, or 'Buy me a coffee ☕️' to support the project!",
                 connection_error: "Connection error. Please check your network or contact the developer.",
                 support_text: "Buy the developer a coffee",
+                welcome_title: "Welcome to Academic Compass!",
+                welcome_p1: "I can help you explore the career blueprint behind your major and plan your academic and professional path.",
+                welcome_p2: "Please enter your major/degree on the left to start navigating! For the most accurate results, please enter the full degree name (e.g., Master of Computer Science).",
                 loading_statuses: [
                     "Connecting to the AI brain...",
                     "Searching for relevant career paths...",
@@ -185,8 +198,8 @@
             }
         };
         
+        // *** FIX START: Completed the ICONS object and the rest of the script ***
         const ICONS = {
-            // 【修正】修复了LinkedIn图标SVG代码中的一个typo
             linkedin: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg>`,
             glassdoor: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M1.185 1.185A1.5 1.5 0 0 1 2.57.293l10.854 10.854a.5.5 0 0 1 0 .708L11.146 14a.5.5 0 0 1-.708 0L.293 2.854A1.5 1.5 0 0 1 1.185 1.185zM14.815 1.185a1.5 1.5 0 0 0-2.122 0L.854 13.146a.5.5 0 0 0 0 .708L2.854 15.707a.5.5 0 0 0 .708 0L15.707 3.565a1.5 1.5 0 0 0 0-2.122l-.892-.892z"/></svg>`,
             indeed: `<svg class="source-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M13.555 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM10.31 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM8.36 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM5.945 5.582a.363.363 0 0 0-.363.363v4.062a.363.363 0 0 0 .363.363h.363a.363.363 0 0 0 .363-.363V5.945a.363.363 0 0 0-.363-.363h-.363zM15.363 4.091A1.91 1.91 0 0 0 13.455 2.182h-10.91A1.91 1.91 0 0 0 .636 4.091v7.818A1.91 1.91 0 0 0 2.545 13.818h10.91a1.91 1.91 0 0 0 1.909-1.909V4.091zM2.909 5.227a1.136 1.136 0 1 1 0 2.273 1.136 1.136 0 0 1 0-2.273z"/></svg>`,
@@ -215,7 +228,8 @@
 
         analyzeButton.addEventListener('click', async function() {
             if (!majorInput.value.trim()) {
-                alert(currentLang === 'en' ? 'Major/Degree is required!' : '“专业/学位”是必填项哦！');
+                // Using a simple custom alert for better UX than the browser's default
+                resultContainer.innerHTML = `<p style="color: var(--primary-color);">${currentLang === 'en' ? 'Major/Degree is required!' : '“专业/学位”是必填项哦！'}</p>`;
                 return;
             }
         
@@ -229,12 +243,12 @@
 
             let statusIndex = 0;
             const loadingStatuses = t.loading_statuses;
-            resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p>${loadingStatuses[statusIndex]}</p>`;
+            resultContainer.innerHTML = `<p>${loadingStatuses[statusIndex]}</p>`;
             statusIndex++;
             
             loadingInterval = setInterval(() => {
                 if (statusIndex < loadingStatuses.length) {
-                    resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p>${loadingStatuses[statusIndex]}</p>`;
+                    resultContainer.innerHTML = `<p>${loadingStatuses[statusIndex]}</p>`;
                     statusIndex++;
                 } else {
                     clearInterval(loadingInterval);
@@ -266,18 +280,20 @@
                         sourcesContainer.innerHTML = DOMPurify.sanitize(sourcesHTML, {ADD_ATTR: ['id'], ADD_TAGS: ['svg', 'path']});
                     }
                 } else {
-                    if (result.error === 'rate_limit_exceeded') {
-                        resultContainer.innerHTML = `<h2>${t.result_placeholder_title}</h2><p style="white-space: pre-wrap;">${result.message || t.rate_limit_exceeded}</p>`;
+                    if (response.status === 429 || result.error === 'rate_limit_exceeded') {
+                        resultContainer.innerHTML = `<h2 style="color: var(--primary-color);">Quota Reached</h2><p style="white-space: pre-wrap;">${result.message || t.rate_limit_exceeded}</p>`;
                     } else {
                         resultContainer.innerHTML = `<h2>Error</h2><p>${result.error || 'Unknown error'}</p>`;
                     }
                 }
             } catch (error) {
                 if (loadingInterval) clearInterval(loadingInterval);
+                const t = translations[currentLang];
                 resultContainer.innerHTML = `<h2>Error</h2><p>${t.connection_error}</p>`;
                 console.error("Fetch Error:", error);
             } finally {
                 if (loadingInterval) clearInterval(loadingInterval);
+                const t = translations[currentLang];
                 buttonTextSpan.textContent = t.button_text;
                 if(analyzeButton.querySelector('.spinner')) analyzeButton.querySelector('.spinner').remove();
                 analyzeButton.disabled = false;
@@ -289,6 +305,7 @@
         langToggle.addEventListener('click', (event) => { if (event.target.tagName === 'BUTTON') { const langCode = event.target.dataset.lang; if (langCode && langCode !== currentLang) { setLanguage(langCode); } } });
         setTheme(localStorage.getItem('theme') || 'dark');
         setLanguage('zh-CN');
+        // *** FIX END ***
     </script>
 </body>
 </html>
