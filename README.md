@@ -1,4 +1,4 @@
-###🧭 Academic Compass / 学术罗盘
+🧭 Academic Compass / 学术罗盘
 An AI-powered web application designed to help students and graduates navigate their career paths by analyzing their academic and professional profiles.
 
 一个基于 AI 的在线应用，旨在通过分析用户的学术及专业背景，帮助学生和毕业生探索未来的职业方向，为他们的生涯规划提供导航。
@@ -78,4 +78,3 @@ Open in Browser: Simply open the index.html file with any modern web browser (li
 
 Functionality: The frontend is fully functional for UI interactions. For the analysis feature to work, it needs to be able to connect to the live backend API. Ensure you have an active internet connection.
 / 功能: 前端界面交互功能完整。分析功能需要连接到已部署的后端API才能正常工作，请确保您有网络连接。
-}
